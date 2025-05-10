@@ -16,16 +16,14 @@
                     <th>Importe</th>
                     <th>Estado</th>
                     <th>Fecha de pago</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="p in paymentsStore.payments" :key="p.id">
                     <td>{{ p.payment_title }}</td>
                     <td>{{ p.booking_id }}</td>
-                    <td>
-                        <span v-if="p.payment_method_stripe_session_id">Stripe</span>
-                        <span v-else>---</span>
-                    </td>
+                    <td>{{ p.payment_method }}</td>
                     <td>{{ p.amount }} €</td>
                     <td>
                         <v-chip :color="p.status === 'paid' ? 'success' : 'warning'" size="small">
@@ -34,6 +32,16 @@
                     </td>
                     <td>
                         {{ p.paid_at ? formatDate(p.paid_at) : 'Pendiente' }}
+                    </td>
+                    <td>
+                        <v-btn v-if="p.status !== 'paid'" color="primary" variant="outlined" @click="payNow(p)">
+                            <v-icon start>mdi-credit-card</v-icon>
+                            Pagar
+                        </v-btn>
+                        <v-btn v-else color="success" variant="outlined" :href="p.stripe_session_id" target="_blank">
+                            <v-icon start>mdi-receipt</v-icon>
+                            Ticket
+                        </v-btn>
                     </td>
                 </tr>
             </tbody>
@@ -63,5 +71,18 @@
     function formatDate(dateStr) {
         const d = new Date(dateStr);
         return d.toLocaleDateString();
+    }
+
+    function payNow(payment) {
+        // Aquí iría la lógica para redirigir al checkout de Stripe o mostrar un modal
+        alert('Aquí iría la lógica de pago para el pago con id: ' + payment.id);
+    }
+
+    function getStripeReceiptUrl(sessionId) {
+        // Si guardas la URL del recibo en Stripe, puedes devolverla aquí.
+        // Si solo tienes el session_id, puedes construir la URL de Stripe Dashboard (solo para admins)
+        // Para usuarios, normalmente guardarías la URL del recibo en la base de datos.
+        if (!sessionId) return '#';
+        return `https://dashboard.stripe.com/payments/${sessionId}`;
     }
 </script>
