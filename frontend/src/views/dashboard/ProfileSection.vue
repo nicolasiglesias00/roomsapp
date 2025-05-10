@@ -7,7 +7,7 @@
                     <v-col cols="12" class="d-flex justify-center mb-4">
                         <v-avatar size="100">
                             <v-img
-                                :src="form.avatar || authStore.user?.avatar || 'https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-women-cartoon-avatar-in-flat-style-png-image_6110776.png'" />
+                                :src="form.avatar || authStore.user?.avatar || 'https://cdn-icons-png.flaticon.com/512/6858/6858504.png'" />
                         </v-avatar>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -94,6 +94,8 @@
         await authStore.updateProfile(form.value);
         await authStore.updatePreferences(preferences.value);
     };
+
+
 </script>
 
 
