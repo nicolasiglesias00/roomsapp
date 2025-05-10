@@ -14,7 +14,10 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/rooms', require('./routes/rooms'));
 app.use('/api/auth', authRoutes);
-
+app.use('/api/reservations', require('./routes/reservations'));
+app.use('/api/favorites', require('./routes/favorites'));
+app.use('/api/contracts', require('./routes/contracts'));
+app.use('/api/payments', require('./routes/payments'));
 // Error handling
 app.use(errorHandler);
 
