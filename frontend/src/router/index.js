@@ -36,7 +36,8 @@ const router = createRouter({
                 { path: 'favorites', name: 'dashboard-favorites', component: () => import('@/views/dashboard/FavoritesSection.vue') },
                 { path: 'reservations', name: 'dashboard-reservations', component: () => import('@/views/dashboard/ReservationsSection.vue') },
                 { path: 'contracts', name: 'dashboard-contracts', component: () => import('@/views/dashboard/ContractsSection.vue') },
-                { path: 'payments', name: 'dashboard-payments', component: () => import('@/views/dashboard/PaymentsSection.vue') }
+                { path: 'payments', name: 'dashboard-payments', component: () => import('@/views/dashboard/PaymentsSection.vue') },
+                { path: 'settings', name: 'dashboard-settings', component: () => import('@/views/dashboard/SettingsSection.vue') }
             ]
         }
     ]
