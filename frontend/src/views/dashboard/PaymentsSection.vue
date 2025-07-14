@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2 class="text-h5 font-weight-bold mb-4">Mis pagos</h2>
+        <h2 class="text-h5 font-weight-bold mb-4">
+            {{ authStore.user?.role === 'landlord' ? 'Pagos recibidos' : 'Mis pagos' }}</h2>
 
         <v-alert v-if="paymentsStore.payments.length === 0 && !paymentsStore.loading" type="info" border="start"
             class="mb-4">

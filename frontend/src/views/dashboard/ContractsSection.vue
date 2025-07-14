@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h2 class="text-h5 font-weight-bold mb-4">Mis contratos</h2>
+        <h2 class="text-h5 font-weight-bold mb-4">
+            {{ authStore.user?.role === 'landlord' ? 'Contratos de mis habitaciones' : 'Mis contratos' }}</h2>
 
         <h3 class="text-h6 mb-2">Pendientes de firma</h3>
         <v-alert v-if="pendingContracts.length === 0" type="info" border="start" class="mb-4">

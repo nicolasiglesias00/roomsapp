@@ -37,7 +37,11 @@ const router = createRouter({
                 { path: 'reservations', name: 'dashboard-reservations', component: () => import('@/views/dashboard/ReservationsSection.vue') },
                 { path: 'contracts', name: 'dashboard-contracts', component: () => import('@/views/dashboard/ContractsSection.vue') },
                 { path: 'payments', name: 'dashboard-payments', component: () => import('@/views/dashboard/PaymentsSection.vue') },
-                { path: 'settings', name: 'dashboard-settings', component: () => import('@/views/dashboard/SettingsSection.vue') }
+                { path: 'settings', name: 'dashboard-settings', component: () => import('@/views/dashboard/SettingsSection.vue') },
+                // Rutas específicas para propietarios
+                { path: 'rooms', name: 'dashboard-rooms', component: () => import('@/views/dashboard/RoomsSection.vue') },
+                { path: 'requests', name: 'dashboard-requests', component: () => import('@/views/dashboard/RequestsSection.vue') },
+                { path: 'landlord-reservations', name: 'dashboard-landlord-reservations', component: () => import('@/views/dashboard/LandlordReservationsSection.vue') }
             ]
         }
     ]
