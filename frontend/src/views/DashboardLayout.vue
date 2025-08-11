@@ -38,7 +38,7 @@
         if (authStore.user?.role === 'landlord') {
             return [
                 { title: 'Mi perfil', icon: 'mdi-account', route: 'profile' },
-                { title: 'Mis habitaciones', icon: 'mdi-home-city', route: 'rooms' },
+                { title: 'Habitaciones', icon: 'mdi-home-city', route: 'rooms' },
                 { title: 'Solicitudes de reserva', icon: 'mdi-email', route: 'requests' },
                 { title: 'Reservas', icon: 'mdi-calendar-check', route: 'landlord-reservations' },
                 { title: 'Contratos', icon: 'mdi-file-document', route: 'contracts' },
