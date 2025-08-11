@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
-
-const API_URL = 'http://localhost:5000/api';
+import axios from '@/api/axios';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -20,27 +19,22 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true;
             this.error = null;
             try {
-                const response = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, password })
-                });
+                console.log('Intentando login con:', { email });
+                const response = await axios.post('/auth/login', { email, password });
+                console.log('Respuesta del login:', response.data);
 
-                const data = await response.json();
+                const { token, user } = response.data;
+                console.log('Token recibido:', token ? 'SÍ' : 'NO');
+                console.log('User recibido:', user);
 
-                if (!response.ok) {
-                    throw new Error(data.message || 'Error al iniciar sesión');
-                }
-
-                const { token, user } = data;
                 this.token = token;
                 this.user = user;
                 localStorage.setItem('token', token);
+                console.log('Token guardado en localStorage:', localStorage.getItem('token'));
                 return true;
             } catch (error) {
-                this.error = error.message;
+                console.error('Error en login:', error);
+                this.error = error.response?.data?.message || error.message;
                 return false;
             } finally {
                 this.loading = false;
@@ -51,27 +45,22 @@ export const useAuthStore = defineStore('auth', {
             this.loading = true;
             this.error = null;
             try {
-                const response = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
+                console.log('Intentando registro con:', userData);
+                const response = await axios.post('/auth/register', userData);
+                console.log('Respuesta del registro:', response.data);
 
-                const data = await response.json();
+                const { token, user } = response.data;
+                console.log('Token recibido:', token ? 'SÍ' : 'NO');
+                console.log('User recibido:', user);
 
-                if (!response.ok) {
-                    throw new Error(data.message || 'Error al registrar usuario');
-                }
-
-                const { token, user } = data;
                 this.token = token;
                 this.user = user;
                 localStorage.setItem('token', token);
+                console.log('Token guardado en localStorage:', localStorage.getItem('token'));
                 return true;
             } catch (error) {
-                this.error = error.message;
+                console.error('Error en registro:', error);
+                this.error = error.response?.data?.message || error.message;
                 return false;
             } finally {
                 this.loading = false;
@@ -83,19 +72,8 @@ export const useAuthStore = defineStore('auth', {
 
             this.loading = true;
             try {
-                const response = await fetch(`${API_URL}/auth/profile`, {
-                    headers: {
-                        'Authorization': `Bearer ${this.token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || 'Error al obtener el perfil');
-                }
-
-                this.user = data;
+                const response = await axios.get('/auth/profile');
+                this.user = response.data;
             } catch (error) {
                 console.error('Error al obtener el perfil:', error);
                 this.logout();

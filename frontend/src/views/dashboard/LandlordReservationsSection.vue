@@ -191,7 +191,7 @@
         loading.value = true;
         error.value = null;
         try {
-            const response = await axios.get('/api/reservations/landlord');
+            const response = await axios.get('/reservations/landlord');
             reservations.value = response.data;
         } catch (err) {
             error.value = 'Error cargando las reservas';

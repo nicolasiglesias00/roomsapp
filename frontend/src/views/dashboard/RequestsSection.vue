@@ -162,7 +162,7 @@
     const loadRequests = async () => {
         loading.value = true;
         try {
-            const response = await axios.get('/api/reservations/landlord-requests');
+            const response = await axios.get('/reservations/landlord-requests');
             requests.value = response.data;
         } catch (error) {
             console.error('Error cargando solicitudes:', error);
@@ -174,7 +174,7 @@
     const approveRequest = async (requestId) => {
         processing.value = true;
         try {
-            await axios.put(`/api/reservations/${requestId}/approve`);
+            await axios.put(`/reservations/${requestId}/approve`);
             await loadRequests();
         } catch (error) {
             console.error('Error aprobando solicitud:', error);
@@ -186,7 +186,7 @@
     const rejectRequest = async (requestId) => {
         processing.value = true;
         try {
-            await axios.put(`/api/reservations/${requestId}/reject`);
+            await axios.put(`/reservations/${requestId}/reject`);
             await loadRequests();
         } catch (error) {
             console.error('Error rechazando solicitud:', error);

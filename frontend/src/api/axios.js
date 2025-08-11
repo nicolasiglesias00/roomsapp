@@ -1,11 +1,28 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://localhost:5000/api',
     headers: {
         'Content-Type': 'application/json'
     }
 });
+
+// Interceptor para agregar el token de autenticación
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        console.log('Interceptor - Token encontrado:', token ? 'SÍ' : 'NO');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+            console.log('Interceptor - Header Authorization agregado:', config.headers.Authorization);
+        }
+        console.log('Interceptor - URL de la petición:', config.url);
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 
 // Interceptor para manejar errores
 api.interceptors.response.use(

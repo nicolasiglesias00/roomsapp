@@ -62,6 +62,7 @@ const roomsController = {
 
     // Get room by ID
     getRoomById: async (req, res) => {
+        console.log('🔴 getRoomById ejecutándose - ID:', req.params.id);
         try {
             const [rooms] = await db.query(`
         SELECT r.*, 
@@ -140,7 +141,6 @@ const roomsController = {
             available_from,
             available_until,
             nearby_university,
-            landlord_id,
             images,
             utilities
         } = req.body;
@@ -148,7 +148,7 @@ const roomsController = {
         try {
             await db.beginTransaction();
 
-            // Insert room
+            // Insert room using the authenticated user's ID as landlord_id
             const [result] = await db.query(
                 `INSERT INTO rooms (
           title, description, monthly_price, utilities_included,
@@ -162,7 +162,7 @@ const roomsController = {
                     address, latitude, longitude, square_meters,
                     private_bathroom, wifi, furnished,
                     available_from, available_until, nearby_university,
-                    landlord_id
+                    req.user.id
                 ]
             );
 
@@ -204,16 +204,81 @@ const roomsController = {
         }
     },
 
-    // Delete room by ID
+    // Get rooms of the logged-in landlord
+    getMyRooms: async (req, res) => {
+        console.log('🟢 getMyRooms ejecutándose - Landlord ID:', req.user.id);
+        try {
+            const landlordId = req.user.id;
+            console.log('Getting rooms for landlord ID:', landlordId);
+
+            const [rooms] = await db.query(
+                `SELECT r.*, GROUP_CONCAT(DISTINCT ri.image_url) as images
+                 FROM rooms r
+                 LEFT JOIN room_images ri ON r.id = ri.room_id
+                 WHERE r.landlord_id = ?
+                 GROUP BY r.id
+                 ORDER BY r.created_at DESC`,
+                [landlordId]
+            );
+
+            console.log('Found rooms:', rooms.length);
+
+            const formattedRooms = rooms.map(room => ({
+                id: room.id,
+                title: room.title,
+                description: room.description,
+                price: room.monthly_price,
+                address: room.address,
+                bedrooms: room.bedrooms || 1,
+                bathrooms: room.bathrooms || 1,
+                status: room.status,
+                images: room.images ? room.images.split(',') : [],
+                created_at: room.created_at
+            }));
+
+            console.log('Formatted rooms:', formattedRooms.length);
+            res.json(formattedRooms);
+        } catch (error) {
+            console.error('Error in getMyRooms:', error);
+            res.status(500).json({ error: 'Error al obtener habitaciones del propietario' });
+        }
+    },
+
+    // Update room (solo si es el landlord dueño)
+    updateRoom: async (req, res) => {
+        try {
+            const landlordId = req.user.id;
+            const roomId = req.params.id;
+            // Verifica que la habitación sea del landlord
+            const [rows] = await db.query('SELECT * FROM rooms WHERE id = ? AND landlord_id = ?', [roomId, landlordId]);
+            if (rows.length === 0) {
+                return res.status(403).json({ message: 'No autorizado para modificar esta habitación' });
+            }
+            const { title, description, price, address, bedrooms, bathrooms, status } = req.body;
+            await db.query(
+                'UPDATE rooms SET title=?, description=?, monthly_price=?, address=?, bedrooms=?, bathrooms=?, status=? WHERE id=?',
+                [title, description, price, address, bedrooms, bathrooms, status, roomId]
+            );
+            res.json({ message: 'Habitación actualizada correctamente' });
+        } catch (error) {
+            res.status(500).json({ error: 'Error al actualizar habitación' });
+        }
+    },
+
+    // Delete room by ID (solo si es el landlord dueño)
     deleteRoom: async (req, res) => {
         try {
-            const { id } = req.params;
-            // Puedes hacer un borrado lógico o físico, aquí ejemplo físico:
-            await db.query('DELETE FROM rooms WHERE id = ?', [id]);
-            res.json({ message: 'Room deleted successfully' });
+            const landlordId = req.user.id;
+            const roomId = req.params.id;
+            // Verifica que la habitación sea del landlord
+            const [rows] = await db.query('SELECT * FROM rooms WHERE id = ? AND landlord_id = ?', [roomId, landlordId]);
+            if (rows.length === 0) {
+                return res.status(403).json({ message: 'No autorizado para eliminar esta habitación' });
+            }
+            await db.query('DELETE FROM rooms WHERE id = ?', [roomId]);
+            res.json({ message: 'Habitación eliminada correctamente' });
         } catch (error) {
-            console.error('Error deleting room:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: 'Error al eliminar habitación' });
         }
     }
 };

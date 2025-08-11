@@ -189,7 +189,7 @@
     const loadRooms = async () => {
         loading.value = true;
         try {
-            const response = await axios.get('/api/rooms/landlord');
+            const response = await axios.get('/rooms/landlord');
             rooms.value = response.data;
         } catch (error) {
             console.error('Error cargando habitaciones:', error);
@@ -204,9 +204,9 @@
         saving.value = true;
         try {
             if (editingRoom.value) {
-                await axios.put(`/api/rooms/${editingRoom.value.id}`, roomForm.value);
+                await axios.put(`/rooms/${editingRoom.value.id}`, roomForm.value);
             } else {
-                await axios.post('/api/rooms', roomForm.value);
+                await axios.post('/rooms', roomForm.value);
             }
 
             showAddRoomDialog.value = false;
@@ -228,7 +228,7 @@
     const deleteRoom = async (roomId) => {
         if (confirm('¿Estás seguro de que quieres eliminar esta habitación?')) {
             try {
-                await axios.delete(`/api/rooms/${roomId}`);
+                await axios.delete(`/rooms/${roomId}`);
                 await loadRooms();
             } catch (error) {
                 console.error('Error eliminando habitación:', error);
